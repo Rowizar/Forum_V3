@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import QuestionForm
 from .models import Category, Question, Answer
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -27,11 +30,14 @@ def recent(request):
 	questions = Question.objects.all().order_by('-pub_date')
 	return render(request, 'recent.html', {'questions': questions})
 
+
 def search(request):
 	query = request.GET.get('query', '')
 	results = Question.objects.filter(title__icontains=query)
 	return render(request, 'search_results.html', {'results': results})
 
+
+@login_required(login_url='/login/')
 def create_question(request):
 	if request.method == 'POST':
 		form = QuestionForm(request.POST)
