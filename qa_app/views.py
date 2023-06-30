@@ -11,7 +11,17 @@ from .models import Question
 
 def base(request):
 	categories = Category.objects.all()
-	return render(request, 'base.html', {'categories': categories})
+
+	if request.method == 'POST' and request.user.is_authenticated:
+		form = QuestionForm(request.POST)
+		if form.is_valid():
+			question = form.save(commit=False)
+			question.author = request.user
+			question.save()
+			return redirect('question_detail', question.id)
+	else:
+		form = QuestionForm()
+	return render(request, 'base.html', {'categories': categories, 'form': form})
 
 
 def question_list(request, category_id):
@@ -40,20 +50,6 @@ def search(request):
 	return render(request, 'search_results.html', {'results': results})
 
 
-@login_required(login_url='/login/')
-def create_question(request):
-	if request.method == 'POST':
-		form = QuestionForm(request.POST)
-		if form.is_valid():
-			question = form.save(commit=False)
-			question.author = request.user
-			question.save()
-			return redirect('question_detail', question.id)
-	else:
-		form = QuestionForm()
-	return render(request, 'create_question.html', {'form': form})
-
-
 def register(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
@@ -66,7 +62,21 @@ def register(request):
 
 
 def question_detail(request, id):
-
 	# question = get_object_or_404(Question, id=id)
 	questions = Question.objects.all()
 	return render(request, 'feed.html', {'questions': questions})
+
+
+def login_view(request):
+	if request.method == 'POST':
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return redirect('base')
+		else:
+			# Invalid username or password
+			return render(request, 'login.html', {'error': 'Invalid username or password'})
+	else:
+		return render(request, 'login.html')
