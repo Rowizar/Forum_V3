@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render, redirect
 from .forms import QuestionForm
 from .models import Category, Question, Answer
@@ -49,3 +50,14 @@ def create_question(request):
 	else:
 		form = QuestionForm()
 	return render(request, 'create_question.html', {'form': form})
+
+
+def register(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('login')  # предполагается, что у вас есть маршрут и представление для входа
+	else:
+		form = UserCreationForm()
+	return render(request, 'register.html', {'form': form})

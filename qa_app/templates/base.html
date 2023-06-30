@@ -1,58 +1,50 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}Мой сайт{% endblock %}</title>
-    <!-- Подключите здесь свои стили и скрипты -->
-    <!-- Например, Bootstrap для стилей и jQuery для скриптов -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <header class="d-flex justify-content-between p-3 bg-light">
+    <header class="d-flex justify-content-between p-3 bg-light header">
         <div>
-            <!-- Логотип сайта -->
-            <img src="logo.png" alt="logo">
+            <img src="../static/img/logo.png" class="logo" alt="logo">
         </div>
         <div class="d-flex justify-content-center">
-            <!-- Навигационное меню -->
             <nav class="pr-3">
-                <a href="{% url 'feed' %}">Лента</a>
-                <a href="{% url 'popular' %}">Популярные</a>
-                <a href="{% url 'recent' %}">Новые</a>
+                <a href="{% url 'feed' %}" class="btn btn-link nav-link">Лента</a>
+                <a href="{% url 'popular' %}" class="btn btn-link nav-link">Популярные</a>
+                <a href="{% url 'recent' %}" class="btn btn-link nav-link">Новые</a>
             </nav>
-            <!-- Поиск -->
-            <form action="{% url 'search' %}" method="GET" class="pr-3">
-                <input type="text" name="query">
-                <button type="submit">
-                    <img src="search-icon.png" alt="Search">
+            <form action="{% url 'search' %}" method="GET" class="form-inline pr-3">
+                <input type="text" name="query" class="form-control">
+                <button type="submit" class="btn btn-primary">
+                    <span>Search</span>
                 </button>
             </form>
         </div>
         <div>
-            <!-- Регистрация -->
-            <a href="">Регистрация</a>
+            <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
         </div>
     </header>
 
     <main class="container mt-3">
         <div class="row">
-            <!-- Лента вопросов -->
             <div class="col-md-8">
                 {% block content %}{% endblock %}
             </div>
-            <!-- Боковая панель -->
             <div class="col-md-4">
-                <!-- Создание вопроса -->
                 <div class="mb-4">
                     <h2>Создать свой вопрос</h2>
-                    <form action="{% url 'create_question' %}" method="POST" enctype="multipart/form-data">
+                    <form action="{% url 'create_question' %}" method="POST" enctype="multipart/form-data" class="form-group">
                         {% csrf_token %}
-                        <textarea name="text" required></textarea>
-                        <input type="file" name="image">
-                        <button type="submit">Создать</button>
+                        <textarea name="text" required class="form-control"></textarea>
+                        <input type="file" name="image" class="form-control-file mt-2">
+                        <button type="submit" class="btn btn-primary mt-2">Создать</button>
                     </form>
                 </div>
-                <!-- Популярные пользователи -->
                 <div>
                     <h2>Популярные пользователи</h2>
                     <!-- Список будет динамически генерироваться -->
