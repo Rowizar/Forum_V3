@@ -5,6 +5,8 @@ from .models import Category, Question, Answer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import get_object_or_404, render
+from .models import Question
 
 
 def base(request):
@@ -14,11 +16,11 @@ def base(request):
 
 def question_list(request, category_id):
 	questions = Question.objects.filter(category_id=category_id)
-	return render(request, 'question_list.html', {'questions': questions})
+	return render(request, 'feed.html', {'questions': questions})
 
 
 def feed(request):
-	questions = Question.objects.all().order_by('-pub_date')
+	questions = Question.objects.all()  # .order_by('-pub_date')
 	return render(request, 'feed.html', {'questions': questions})
 
 
@@ -61,3 +63,10 @@ def register(request):
 	else:
 		form = UserCreationForm()
 	return render(request, 'register.html', {'form': form})
+
+
+def question_detail(request, id):
+
+	# question = get_object_or_404(Question, id=id)
+	questions = Question.objects.all()
+	return render(request, 'feed.html', {'questions': questions})

@@ -2,55 +2,57 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Мой сайт{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <header class="d-flex justify-content-between p-3 bg-light header">
-        <div>
-            <img src="../static/img/logo.png" class="logo" alt="logo">
-        </div>
-        <div class="d-flex justify-content-center">
-            <nav class="pr-3">
-                <a href="{% url 'feed' %}" class="btn btn-link nav-link">Лента</a>
-                <a href="{% url 'popular' %}" class="btn btn-link nav-link">Популярные</a>
-                <a href="{% url 'recent' %}" class="btn btn-link nav-link">Новые</a>
-            </nav>
-            <form action="{% url 'search' %}" method="GET" class="form-inline pr-3">
-                <input type="text" name="query" class="form-control">
-                <button type="submit" class="btn btn-primary">
-                    <span>Search</span>
-                </button>
-            </form>
-        </div>
-        <div>
-            <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
-        </div>
-    </header>
+<header class="d-flex justify-content-between p-3 bg-light header">
+    <div>
+        <img src="../static/img/logo.png" class="logo" alt="logo">
+    </div>
+    <div class="d-flex justify-content-center">
+        <nav class="pr-3">
+            <a href="{% url 'feed' %}" class="btn btn-link nav-link">Лента</a>
+            <a href="{% url 'popular' %}" class="btn btn-link nav-link">Популярные</a>
+            <a href="{% url 'recent' %}" class="btn btn-link nav-link">Новые</a>
+        </nav>
+        <form action="{% url 'search' %}" method="GET" class="form-inline pr-3">
+            <input type="text" name="query" class="form-control">
+            <button type="submit" class="btn btn-primary">
+                <span>Search</span>
+            </button>
+        </form>
+    </div>
+    <div>
+        <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
+    </div>
+</header>
 
-    <main class="container mt-3">
-        <div class="row">
-            <div class="col-md-8">
-                {% block content %}{% endblock %}
+<main class="container mt-3">
+    <div class="row">
+        <div class="col-md-8">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+            <div class="mb-4">
+                <h2>Создать свой вопрос</h2>
+                <form action="{% url 'create_question' %}" method="POST" enctype="multipart/form-data"
+                      class="form-group">
+                    {% csrf_token %}
+                    <textarea name="text" required class="form-control"></textarea>
+                    <input type="file" name="image" class="form-control-file mt-2">
+                    <button type="submit" class="btn btn-primary mt-2">Создать</button>
+                </form>
             </div>
-            <div class="col-md-4">
-                <div class="mb-4">
-                    <h2>Создать свой вопрос</h2>
-                    <form action="{% url 'create_question' %}" method="POST" enctype="multipart/form-data" class="form-group">
-                        {% csrf_token %}
-                        <textarea name="text" required class="form-control"></textarea>
-                        <input type="file" name="image" class="form-control-file mt-2">
-                        <button type="submit" class="btn btn-primary mt-2">Создать</button>
-                    </form>
-                </div>
-                <div>
-                    <h2>Популярные пользователи</h2>
-                    <!-- Список будет динамически генерироваться -->
-                </div>
+            <div>
+                <h2>Популярные пользователи</h2>
+                <!-- Список будет динамически генерироваться -->
             </div>
         </div>
-    </main>
+    </div>
+</main>
 </body>
 </html>
