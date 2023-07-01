@@ -18,6 +18,7 @@
             <a href="{% url 'feed' %}" class="btn btn-link nav-link">Лента</a>
             <a href="{% url 'popular' %}" class="btn btn-link nav-link">Популярные</a>
             <a href="{% url 'recent' %}" class="btn btn-link nav-link">Новые</a>
+            <a href="{% url 'bookmarks' %}" class="btn btn-link nav-link">Избранное</a>
         </nav>
         <form action="{% url 'search' %}" method="GET" class="form-inline pr-3">
             <input type="text" name="query" class="form-control">

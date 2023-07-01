@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Your Bookmarks</h2>
+    {% for bookmark in bookmarks %}
+        <div>
+            <h2><a href="{% url 'question_detail' id=bookmark.question.id %}">{{ bookmark.question.title }}</a></h2>
+            <p>{{ bookmark.question.text|truncatechars:100 }}</p>
+            <p><a href="{% url 'delete_bookmark' bookmark.id %}">Remove Bookmark</a></p>
+        </div>
+    {% empty %}
+        <p>You have no bookmarks yet.</p>
+    {% endfor %}
+{% endblock %}

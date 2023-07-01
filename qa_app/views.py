@@ -1,17 +1,17 @@
 from django.db.models import Count
 from django.shortcuts import render, redirect
 from .forms import QuestionForm
-from .models import Category, Question, Answer
+from .models import Category, Question, Answer, Bookmark
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404, render
 from .models import Question
+from .forms import AnswerForm
 
 
 def base(request):
 	categories = Category.objects.all()
-
 	if request.method == 'POST' and request.user.is_authenticated:
 		form = QuestionForm(request.POST)
 		if form.is_valid():
@@ -30,7 +30,7 @@ def question_list(request, category_id):
 
 
 def feed(request):
-	questions = Question.objects.all()  # .order_by('-pub_date')
+	questions = Question.objects.all().order_by('-pub_date')
 	return render(request, 'feed.html', {'questions': questions})
 
 
@@ -62,9 +62,26 @@ def register(request):
 
 
 def question_detail(request, id):
-	# question = get_object_or_404(Question, id=id)
-	questions = Question.objects.all()
-	return render(request, 'feed.html', {'questions': questions})
+	question = get_object_or_404(Question, id=id)
+	answers = Answer.objects.filter(question=question)
+
+	bookmark = None
+	if request.user.is_authenticated:
+		bookmark = Bookmark.objects.filter(user=request.user, question=question).first()
+
+	if request.method == 'POST' and request.user.is_authenticated:
+		form = AnswerForm(request.POST)
+		if form.is_valid():
+			answer = form.save(commit=False)
+			answer.user = request.user
+			answer.question = question
+			answer.save()
+			return redirect('question_detail', question.id)  # Обновить страницу с новым ответом
+	else:
+		form = AnswerForm()
+
+	return render(request, 'question_detail.html',
+				  {'question': question, 'answers': answers, 'form': form, 'bookmark': bookmark})
 
 
 def login_view(request):
@@ -80,3 +97,20 @@ def login_view(request):
 			return render(request, 'login.html', {'error': 'Invalid username or password'})
 	else:
 		return render(request, 'login.html')
+
+
+def bookmark(request, question_id):
+	question = get_object_or_404(Question, id=question_id)
+	Bookmark.objects.create(user=request.user, question=question)
+	return redirect('feed')  # или куда вам нужно перенаправить пользователя после добавления в закладки
+
+
+def delete_bookmark(request, bookmark_id):
+	bookmark = get_object_or_404(Bookmark, id=bookmark_id, user=request.user)
+	bookmark.delete()
+	return redirect('bookmarks')  # или куда вам нужно перенаправить пользователя после удаления из закладок
+
+
+def bookmarks(request):
+	bookmarks = Bookmark.objects.filter(user=request.user)
+	return render(request, 'bookmarks.html', {'bookmarks': bookmarks})

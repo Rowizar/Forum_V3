@@ -16,18 +16,21 @@ class Question(models.Model):
 	text = models.TextField()
 	image = models.ImageField(upload_to='images/', null=True, blank=True)
 	pub_date = models.DateTimeField(auto_now_add=True)
+	categories = models.ManyToManyField(Category, blank=True)
 
 	def __str__(self):
 		return self.title
+
 
 class Answer(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	text = models.TextField()
-	pub_date = models.DateTimeField('date published')
+	pub_date = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
 		return self.text
+
 
 class QuestionRating(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -36,6 +39,8 @@ class QuestionRating(models.Model):
 
 	def __str__(self):
 		return self.rating
+
+
 class AnswerRating(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
@@ -44,10 +49,25 @@ class AnswerRating(models.Model):
 	def __str__(self):
 		return self.rating
 
+
 class UserCategoryPreference(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	preference_level = models.IntegerField()
 
 	def __str__(self):
-		return str(self.user)+str(self.category)
+		return str(self.user) + str(self.category)
+
+
+class Bookmark(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	question = models.ForeignKey(Question, on_delete=models.CASCADE)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		unique_together = (
+			'user',
+			'question')  # чтобы предотвратить повторные закладки одного и того же вопроса одним пользователем
+
+	def __str__(self):
+		return f'{self.user.username} bookmarked {self.question.title}'
