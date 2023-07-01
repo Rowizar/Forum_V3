@@ -2,15 +2,18 @@
 
 {% block content %}
     <h2>{{ question.title }}</h2>
+    {% if question.image %}
+        <img style="max-width: 500px" src="{{ question.image.url }}">
+    {% endif %}
     <p>{{ question.text }}</p>
 
     {% if request.user.is_authenticated %}
-    {% if bookmark %}
-        <a href="{% url 'delete_bookmark' bookmark.id %}">Remove Bookmark</a>
-    {% else %}
-        <a href="{% url 'add_bookmark' question.id %}">Add Bookmark</a>
+        {% if bookmark %}
+            <a href="{% url 'delete_bookmark' bookmark.id %}">Remove Bookmark</a>
+        {% else %}
+            <a href="{% url 'add_bookmark' question.id %}">Add Bookmark</a>
+        {% endif %}
     {% endif %}
-{% endif %}
 
     <h2>Answers</h2>
     {% for answer in answers %}

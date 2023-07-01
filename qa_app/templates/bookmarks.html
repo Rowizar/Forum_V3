@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Your Bookmarks</h2>
+    <h2>Избранное</h2>
     {% for bookmark in bookmarks %}
         <div>
             <h2><a href="{% url 'question_detail' id=bookmark.question.id %}">{{ bookmark.question.title }}</a></h2>

@@ -7,8 +7,10 @@
     {% for question in questions %}
         <div>
             <h2><a href="{% url 'question_detail' question.id %}">{{ question.title }}</a></h2>
+            {% if question.image %}
+                <img style="max-width: 500px" src="{{ question.image.url }}">
+            {% endif %}
             <p>{{ question.text }}</p>
-            <!-- Здесь должны быть картинки, если они есть -->
             <div class="votes">
                 <!-- Возможно, вам потребуются интерактивные элементы для голосования -->
                 <button>🔺</button>
