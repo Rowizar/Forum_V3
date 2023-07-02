@@ -18,6 +18,10 @@ class Question(models.Model):
 	pub_date = models.DateTimeField(auto_now_add=True)
 	categories = models.ManyToManyField(Category, blank=True)
 
+	def get_rating(self):
+		ratings = QuestionRating.objects.filter(question=self)
+		return sum(rating.rating for rating in ratings)
+
 	def __str__(self):
 		return self.title
 
@@ -27,6 +31,10 @@ class Answer(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	text = models.TextField()
 	pub_date = models.DateTimeField(auto_now_add=True)
+
+	def get_rating(self):
+		ratings = AnswerRating.objects.filter(answer=self)
+		return sum(rating.rating for rating in ratings)
 
 	def __str__(self):
 		return self.text

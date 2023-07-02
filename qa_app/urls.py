@@ -2,7 +2,6 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 
-
 urlpatterns = [
 	path('', views.base, name='base'),
 	path('category/<int:category_id>/', views.question_list, name='question_list'),
@@ -17,5 +16,9 @@ urlpatterns = [
 	path('bookmark/<int:question_id>/', views.bookmark, name='add_bookmark'),
 	path('delete_bookmark/<int:bookmark_id>/', views.delete_bookmark, name='delete_bookmark'),
 	path('bookmarks/', views.bookmarks, name='bookmarks'),
+	path('question/<int:question_id>/upvote/', views.upvote_question, name='upvote_question'),
+	path('question/<int:question_id>/downvote/', views.downvote_question, name='downvote_question'),
+	path('answer/<int:answer_id>/upvote/', views.upvote_answer, name='upvote_answer'),
+	path('answer/<int:answer_id>/downvote/', views.downvote_answer, name='downvote_answer'),
 
 ]

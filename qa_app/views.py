@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django.shortcuts import render, redirect
 from .forms import QuestionForm
-from .models import Category, Question, Answer, Bookmark
+from .models import Category, Question, Answer, Bookmark, QuestionRating, AnswerRating
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -159,3 +159,59 @@ def bookmarks(request):
 	else:
 		form = QuestionForm()
 	return render(request, 'bookmarks.html', {'bookmarks': bookmarks})
+
+
+@login_required
+def upvote_question(request, question_id):
+	question = get_object_or_404(Question, id=question_id)
+	question_rating, created = QuestionRating.objects.get_or_create(
+		user=request.user,
+		question=question,
+		defaults={'rating': 1},
+	)
+	if not created:
+		question_rating.rating = 1
+		question_rating.save()
+	return redirect(request.META.get('HTTP_REFERER', 'base'))
+
+
+@login_required
+def downvote_question(request, question_id):
+	question = get_object_or_404(Question, id=question_id)
+	question_rating, created = QuestionRating.objects.get_or_create(
+		user=request.user,
+		question=question,
+		defaults={'rating': -1},
+	)
+	if not created:
+		question_rating.rating = -1
+		question_rating.save()
+	return redirect(request.META.get('HTTP_REFERER', 'base'))
+
+
+@login_required
+def upvote_answer(request, answer_id):
+	answer = get_object_or_404(Answer, id=answer_id)
+	answer_rating, created = AnswerRating.objects.get_or_create(
+		user=request.user,
+		answer=answer,
+		defaults={'rating': 1},
+	)
+	if not created:
+		answer_rating.rating = 1
+		answer_rating.save()
+	return redirect(request.META.get('HTTP_REFERER', 'base'))
+
+
+@login_required
+def downvote_answer(request, answer_id):
+	answer = get_object_or_404(Answer, id=answer_id)
+	answer_rating, created = AnswerRating.objects.get_or_create(
+		user=request.user,
+		answer=answer,
+		defaults={'rating': -1},
+	)
+	if not created:
+		answer_rating.rating = -1
+		answer_rating.save()
+	return redirect(request.META.get('HTTP_REFERER', 'base'))
