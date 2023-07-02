@@ -46,7 +46,7 @@ class QuestionRating(models.Model):
 	rating = models.IntegerField()
 
 	def __str__(self):
-		return self.rating
+		return str(self.rating)
 
 
 class AnswerRating(models.Model):
@@ -55,7 +55,7 @@ class AnswerRating(models.Model):
 	rating = models.IntegerField()
 
 	def __str__(self):
-		return self.rating
+		return str(self.rating)
 
 
 class UserCategoryPreference(models.Model):

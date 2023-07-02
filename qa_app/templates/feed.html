@@ -4,7 +4,6 @@
 
 {% block content %}
     <h1>Лента</h1>
-    <!-- Предполагая, что "questions" доступен в контексте -->
     {% for question in questions %}
         <div>
             <h2><a href="{% url 'question_detail' question.id %}">{{ question.title }}</a></h2>
@@ -13,13 +12,11 @@
             {% endif %}
             <p>{{ question.text }}</p>
             <div class="votes">
-                <!-- Возможно, вам потребуются интерактивные элементы для голосования -->
                 <a href="{% url 'upvote_question' question.id %}">🔺</a>
                 <span>{{ question.get_rating }}</span>
                 <a href="{% url 'downvote_question' question.id %}">🔻</a>
             </div>
             <div>
-                <!-- Предполагая, что "top_answer" доступен для каждого вопроса -->
                 <p>{{ question.top_answer.text }}</p>
             </div>
         </div>
