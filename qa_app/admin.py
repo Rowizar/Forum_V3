@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars
-
+from simple_history.admin import SimpleHistoryAdmin
 from .models import Category, UserCategoryPreference, Question, QuestionRating, Answer, AnswerRating, Bookmark
 
 
 # Register your models here.
+class QuestionAdmin(SimpleHistoryAdmin):
+	list_display = ('title_short', 'author', 'pub_date', 'get_rating')
+
 
 class AnswerInline(admin.TabularInline):  # или admin.StackedInline
 	model = Answer
@@ -83,3 +86,4 @@ admin.site.register(QuestionRating, QuestionRatingAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(AnswerRating, AnswerRatingAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
+

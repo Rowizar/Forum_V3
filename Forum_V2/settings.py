@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-7^x=rbh%g@znjdx0m5g$0n)kcodt!ve^bjpg%vjv)opi1ef#x&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['qa.std-2159.ist.mospolytech.ru', '127.0.0.1']
 
 # Application definition
 
@@ -36,6 +36,8 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'qa_app.apps.QaAppConfig',
+	'rest_framework',
+	'simple_history',
 ]
 
 MIDDLEWARE = [
@@ -114,6 +116,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -124,3 +127,8 @@ LOGOUT_REDIRECT_URL = 'base'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+REST_FRAMEWORK = {
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+	'PAGE_SIZE': 10
+}

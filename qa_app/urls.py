@@ -1,6 +1,14 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import QuestionViewSet, AnswerViewSet
+from .views import QuestionSearchViewSet
+
+router = DefaultRouter()
+router.register(r'questions', QuestionViewSet)
+router.register(r'answers', AnswerViewSet)
 
 urlpatterns = [
 	path('', views.base, name='base'),
@@ -20,5 +28,7 @@ urlpatterns = [
 	path('question/<int:question_id>/downvote/', views.downvote_question, name='downvote_question'),
 	path('answer/<int:answer_id>/upvote/', views.upvote_answer, name='upvote_answer'),
 	path('answer/<int:answer_id>/downvote/', views.downvote_answer, name='downvote_answer'),
+	path('', include(router.urls)),
+	path('questions/search/', QuestionSearchViewSet.as_view({'get': 'list'}), name='question-search'),
 
 ]

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from simple_history.models import HistoricalRecords
 
 class Category(models.Model):
 	name = models.CharField(max_length=200)
@@ -17,6 +17,7 @@ class Question(models.Model):
 	image = models.ImageField(upload_to='images/', null=True, blank=True)
 	pub_date = models.DateTimeField(auto_now_add=True)
 	categories = models.ManyToManyField(Category, blank=True)
+	history = HistoricalRecords()
 
 	def get_rating(self):
 		ratings = QuestionRating.objects.filter(question=self)

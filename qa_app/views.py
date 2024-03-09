@@ -6,8 +6,49 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404, render
-from .models import Question
 from .forms import AnswerForm
+from .serializers import QuestionSerializer, AnswerSerializer
+from django.db.models import Q
+from rest_framework import viewsets
+from rest_framework.response import Response
+from django.utils.timezone import make_aware
+from datetime import datetime
+
+class QuestionSearchViewSet(viewsets.ViewSet):
+	def list(self, request):
+		queryset = Question.objects.all()
+		search = request.query_params.get('search', None)
+		category = request.query_params.get('category', None)
+
+		if search:
+			queryset = queryset.filter(
+				Q(title__icontains=search) |
+				Q(text__icontains=search)
+			)
+
+		if category:
+			queryset = queryset.filter(categories__name__icontains=category)
+
+		serializer = QuestionSerializer(queryset, many=True)
+		return Response(serializer.data)
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+	queryset = Question.objects.all()
+	serializer_class = QuestionSerializer
+
+	def get_queryset(self):
+		queryset = Question.objects.all()
+		start_date = self.request.query_params.get('start_date', None)
+		if start_date:
+			start_date = make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+			queryset = queryset.filter(pub_date__gte=start_date)
+		return queryset
+
+
+class AnswerViewSet(viewsets.ModelViewSet):
+	queryset = Answer.objects.all()
+	serializer_class = AnswerSerializer
 
 
 def base(request):
