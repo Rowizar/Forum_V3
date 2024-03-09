@@ -2,16 +2,67 @@ from django.contrib import admin
 from django.template.defaultfilters import truncatechars
 from simple_history.admin import SimpleHistoryAdmin
 from .models import Category, UserCategoryPreference, Question, QuestionRating, Answer, AnswerRating, Bookmark
+import openpyxl
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
+from .inlines import AnswerInline
+
+
+def export_to_excel(modeladmin, request, queryset):
+	wb = openpyxl.Workbook()
+	ws = wb.active
+	ws.title = 'Questions'
+
+	columns = ['ID', 'Title', 'Author', 'Publication Date', 'Rating']
+	for col_num, column_title in enumerate(columns, 1):
+		cell = ws.cell(row=1, column=col_num)
+		cell.value = column_title
+
+	for row_num, question in enumerate(queryset, 2):
+		ws.cell(row=row_num, column=1).value = question.pk
+		ws.cell(row=row_num, column=2).value = question.title
+		ws.cell(row=row_num, column=3).value = question.author.username
+		ws.cell(row=row_num, column=4).value = question.pub_date.strftime('%Y-%m-%d %H:%M:%S')
+		ws.cell(row=row_num, column=5).value = question.get_rating()
+
+	for col_num in range(1, len(columns) + 1):
+		column_letter = get_column_letter(col_num)
+		ws.column_dimensions[column_letter].auto_size = True
+
+	response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+	response['Content-Disposition'] = 'attachment; filename="questions.xlsx"'
+	wb.save(response)
+	return response
+
+
+# Регистрируем действие
+export_to_excel.short_description = "Export Selected to Excel"
 
 
 # Register your models here.
+
 class QuestionAdmin(SimpleHistoryAdmin):
-	list_display = ('title_short', 'author', 'pub_date', 'get_rating')
+	list_display = ('title_short', 'author', 'pub_date', 'get_rating', 'is_closed')
+	list_filter = ('author', 'pub_date', 'categories', 'is_closed')
+	search_fields = ('title', 'author__username', 'text')
+	date_hierarchy = 'pub_date'
+	inlines = [AnswerInline, ]
+	readonly_fields = ('get_rating', 'pub_date', 'author')
+	actions = ['make_closed', 'export_to_excel']
+	fieldsets = (
+		(None, {
+			'fields': ('title', 'text', 'categories')
+		}),
+		('Advanced options', {
+			'classes': ('collapse',),
+			'fields': ('is_closed',),
+		}),
+	)
 
+	def make_closed(self, request, queryset):
+		queryset.update(is_closed=True)
 
-class AnswerInline(admin.TabularInline):  # или admin.StackedInline
-	model = Answer
-	extra = 1  # Количество пустых форм по умолчанию
+	make_closed.short_description = "Mark selected questions as closed"
 
 
 class QuestionAdmin(admin.ModelAdmin):
@@ -22,6 +73,7 @@ class QuestionAdmin(admin.ModelAdmin):
 	inlines = [AnswerInline, ]
 	readonly_fields = ('get_rating',)
 	filter_horizontal = ('categories',)
+	actions = [export_to_excel]
 
 	def get_rating(self, obj):
 		return obj.get_rating()
@@ -86,4 +138,3 @@ admin.site.register(QuestionRating, QuestionRatingAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(AnswerRating, AnswerRatingAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
-

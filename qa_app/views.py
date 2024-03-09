@@ -13,6 +13,9 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.utils.timezone import make_aware
 from datetime import datetime
+from rest_framework.decorators import action
+from rest_framework import status
+
 
 class QuestionSearchViewSet(viewsets.ViewSet):
 	def list(self, request):
@@ -36,6 +39,13 @@ class QuestionSearchViewSet(viewsets.ViewSet):
 class QuestionViewSet(viewsets.ModelViewSet):
 	queryset = Question.objects.all()
 	serializer_class = QuestionSerializer
+
+	@action(detail=True, methods=['post'])
+	def close(self, request, pk=None):
+		question = self.get_object()
+		question.is_closed = True
+		question.save()
+		return Response({'status': 'question closed'})
 
 	def get_queryset(self):
 		queryset = Question.objects.all()

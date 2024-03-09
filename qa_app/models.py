@@ -18,6 +18,7 @@ class Question(models.Model):
 	pub_date = models.DateTimeField(auto_now_add=True)
 	categories = models.ManyToManyField(Category, blank=True)
 	history = HistoricalRecords()
+	is_closed = models.BooleanField(default=False)
 
 	def get_rating(self):
 		ratings = QuestionRating.objects.filter(question=self)
