@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'qa_app.apps.QaAppConfig',
 	'rest_framework',
 	'simple_history',
+	'drf_yasg',
 ]
 
 MIDDLEWARE = [
