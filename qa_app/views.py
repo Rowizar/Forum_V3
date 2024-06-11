@@ -15,6 +15,7 @@ from django.utils.timezone import make_aware
 from datetime import datetime
 from rest_framework.decorators import action
 from rest_framework import status
+from .forms import SignUpForm
 
 
 class QuestionSearchViewSet(viewsets.ViewSet):
@@ -138,14 +139,20 @@ def search(request):
 
 
 def register(request):
-	if request.method == 'POST':
-		form = UserCreationForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('login')  # предполагается, что у вас есть маршрут и представление для входа
-	else:
-		form = UserCreationForm()
-	return render(request, 'register.html', {'form': form})
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.refresh_from_db()  # Загрузите профиль instance, чтобы сохранить дополнительные данные
+            user.email = form.cleaned_data.get('email')
+            user.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+            return redirect('base')
+    else:
+        form = SignUpForm()
+    return render(request, 'register.html', {'form': form})
 
 
 def question_detail(request, id):
