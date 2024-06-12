@@ -145,7 +145,7 @@ CELERY_TASK_SERIALIZER = 'json'
 # Mailhog Configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mailhog'
+EMAIL_HOST = 'forum_v2-mailhog-1'
 EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''

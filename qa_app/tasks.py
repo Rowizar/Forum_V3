@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from qa_app.models import Question
 from django.core.mail import send_mail
 
-
 @shared_task
 def send_daily_email():
     yesterday = timezone.now() - timedelta(days=1)
@@ -32,3 +31,17 @@ def send_daily_email():
         fail_silently=False,
     )
     return "Emails sent successfully with the latest questions."
+
+
+@shared_task
+def send_question_created_email(user_email, question_title):
+    send_mail(
+        'Your Question Has Been Posted',
+        f'Thank you for your question: "{question_title}"',
+        'from@example.com',
+        [user_email],
+        fail_silently=False,
+    )
+@shared_task
+def test_task():
+    print("Task is running")

@@ -10,9 +10,16 @@ app = Celery('Forum_V2')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
+app.conf.broker_url = 'redis://redis:6379/0'
+app.conf.result_backend = 'redis://redis:6379/0'
+
 app.conf.beat_schedule = {
     'send-daily-email-every-morning': {
         'task': 'qa_app.tasks.send_daily_email',
         'schedule': crontab(hour=8, minute=0),
+    },
+    "test-every-minute": {
+        "task": "qa_app.tasks.test_task",
+        "schedule": crontab(minute="*/1"),
     },
 }
