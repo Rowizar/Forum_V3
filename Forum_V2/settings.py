@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'qa_app.apps.QaAppConfig',
 	'rest_framework',
 	'simple_history',
+	'django_celery_beat',
 	'drf_yasg',
 ]
 
@@ -139,3 +140,13 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
+# Mailhog Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mailhog'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False

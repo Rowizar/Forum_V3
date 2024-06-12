@@ -3,6 +3,7 @@ from celery import shared_task
 from celery.utils.time import timezone
 from django.contrib.auth.models import User
 from qa_app.models import Question
+from django.core.mail import send_mail
 
 
 @shared_task

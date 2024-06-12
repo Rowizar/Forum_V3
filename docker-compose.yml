@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   web:
     build: .
@@ -9,3 +10,44 @@ services:
       - "8000:8000"
     environment:
       - DEBUG=1
+    depends_on:
+      - redis
+      - mailhog
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+
+  celery:
+    build: .
+    command: celery -A Forum_V2 worker -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  celerybeat:
+    build: .
+    command: celery -A Forum_V2 beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web interface
+

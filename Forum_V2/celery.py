@@ -4,11 +4,12 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Forum_V2')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Forum_V2.settings')
 
 app = Celery('Forum_V2')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
+
 app.conf.beat_schedule = {
     'send-daily-email-every-morning': {
         'task': 'qa_app.tasks.send_daily_email',
