@@ -38,10 +38,21 @@ def send_question_created_email(user_email, question_title):
     send_mail(
         'Your Question Has Been Posted',
         f'Thank you for your question: "{question_title}"',
-        'from@example.com',
+        'from@example.com',  # Адрес отправителя ИЗМЕНИТЬ !!!!
         [user_email],
         fail_silently=False,
     )
 @shared_task
 def test_task():
     print("Task is running")
+
+@shared_task
+def send_minute_email():
+    send_mail(
+        'Minute Email',
+        'This email is sent every minute by Celery.',
+        'from@example.com',
+        ['to@example.com'],
+        fail_silently=False,
+    )
+    return "Sent minute email"
