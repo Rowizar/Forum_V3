@@ -26,4 +26,8 @@ app.conf.beat_schedule = {
         'task': 'qa_app.tasks.send_minute_email',
         'schedule': crontab(minute='*/1'),
     },
+    'save_visits_every-minute': {
+        'task': 'qa_app.tasks.task_save_visits',
+        'schedule': crontab(minute='*/1'),
+    },
 }

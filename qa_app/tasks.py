@@ -4,6 +4,7 @@ from celery.utils.time import timezone
 from django.contrib.auth.models import User
 from qa_app.models import Question
 from django.core.mail import send_mail
+from .services import save_visits
 
 @shared_task
 def send_daily_email():
@@ -56,3 +57,6 @@ def send_minute_email():
         fail_silently=False,
     )
     return "Sent minute email"
+@shared_task
+def task_save_visits():
+    save_visits()
